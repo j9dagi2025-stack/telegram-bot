@@ -6,6 +6,8 @@ from io import BytesIO
 from config import TOKEN, ADMIN_ID
 from db import add_user, set_setting, get_setting, get_all_users
 
+from extra_features import setup_features
+
 bot = telebot.TeleBot(TOKEN, parse_mode="HTML")
 
 admin_wait = {}
@@ -338,5 +340,9 @@ def stats(c):
     bot.send_message(c.message.chat.id, f"📊 SALES: {store['sales']}\n💰 REVENUE: ₹{store['revenue']}")
 
 
+
 print("Bot Running...")
+
+setup_features(bot, users, set_setting, get_setting, ADMIN_ID)
+
 bot.infinity_polling(skip_pending=True)
