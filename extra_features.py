@@ -302,3 +302,4 @@ def setup_features(bot, users, set_setting, get_setting, ADMIN_ID):
                 rank += 1
 
             bot.send_message(call.message.chat.id, text)
+            print("EXTRA FEATURES LOADED")
