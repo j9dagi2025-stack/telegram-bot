@@ -113,7 +113,7 @@ def setup_features(bot, users, set_setting, get_setting, ADMIN_ID):
         update_user(user_id, msg.from_user.username)
 
         if msg.text == "👥 Refer & Earn":
-            link = f"https://t.me/YOUR_BOT_USERNAME?start={user_id}"
+            link = f"https://t.me/vip_pom09_bot?start={user_id}"
             bot.send_message(msg.chat.id, f"👥 Invite & Earn\n\n🔗 {link}")
 
         elif msg.text == "💎 Wallet":
