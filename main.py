@@ -8,6 +8,13 @@ from db import add_user, set_setting, get_setting, get_all_users
 
 from extra_features import setup_features
 
+from pymongo import MongoClient
+
+client = MongoClient("YOUR_MONGO_URL")
+db = client["mydatabase"]
+
+users = db["users"]
+
 bot = telebot.TeleBot(TOKEN, parse_mode="HTML")
 
 admin_wait = {}
@@ -110,8 +117,8 @@ def admin_panel(message):
 # =========================
 # ADMIN SET
 # =========================
-@bot.callback_query_handler(func=lambda c: c.data.startswith("set_"))
-def admin_set(c):
+@bot.callback_query_handler(func=lambda c: c.data == "users")
+def show_users(c):
     if int(c.from_user.id) != int(ADMIN_ID):
         return
 
