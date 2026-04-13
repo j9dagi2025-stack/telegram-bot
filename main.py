@@ -3,15 +3,8 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 import qrcode
 from io import BytesIO
 
-from config import TOKEN, ADMIN_ID, MONGO_URL
+from config import TOKEN, ADMIN_ID
 from db import add_user, set_setting, get_setting, get_all_users
-
-from extra_features import setup_features
-
-from pymongo import MongoClient
-client = MongoClient(MONGO_URL)
-db = client["mydatabase"]
-users = db["users"]
 
 bot = telebot.TeleBot(TOKEN, parse_mode="HTML")
 
@@ -115,8 +108,8 @@ def admin_panel(message):
 # =========================
 # ADMIN SET
 # =========================
-@bot.callback_query_handler(func=lambda c: c.data == "users")
-def show_users(c):
+@bot.callback_query_handler(func=lambda c: c.data.startswith("set_"))
+def admin_set(c):
     if int(c.from_user.id) != int(ADMIN_ID):
         return
 
@@ -345,9 +338,5 @@ def stats(c):
     bot.send_message(c.message.chat.id, f"📊 SALES: {store['sales']}\n💰 REVENUE: ₹{store['revenue']}")
 
 
-
 print("Bot Running...")
-
-setup_features(bot, users, set_setting, get_setting, ADMIN_ID)
-
 bot.infinity_polling(skip_pending=True)
