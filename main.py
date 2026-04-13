@@ -3,16 +3,14 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 import qrcode
 from io import BytesIO
 
-from config import TOKEN, ADMIN_ID
+from config import TOKEN, ADMIN_ID, MONGO_URL
 from db import add_user, set_setting, get_setting, get_all_users
 
 from extra_features import setup_features
 
 from pymongo import MongoClient
-
-client = MongoClient("YOUR_MONGO_URL")
+client = MongoClient(MONGO_URL)
 db = client["mydatabase"]
-
 users = db["users"]
 
 bot = telebot.TeleBot(TOKEN, parse_mode="HTML")
