@@ -2,6 +2,7 @@ import os
 
 TOKEN = os.getenv("TOKEN")
 ADMIN_ID = os.getenv("ADMIN_ID")
+MONGO_URL = os.getenv("MONGO_URL")
 
 if TOKEN is None:
     raise ValueError("TOKEN environment variable missing!")
