@@ -23,7 +23,7 @@ def get_store():
     return {
         "upi": get_setting("upi", ""),
         "demo": get_setting("demo", ""),
-        "price": get_setting("price", "0"),
+         "price": int(get_setting("price", "0")),
         "name": get_setting("name", ""),
         "premium_link": get_setting("premium_link", ""),
         "start_text": get_setting("start_text", ""),
@@ -197,7 +197,7 @@ def buy(c):
     pay_url = f"https://j9dagi2025-stack.github.io/?am={price}"
 
     kb = InlineKeyboardMarkup()
-    kb.add(InlineKeyboardButton("🚀 PAY NOW", url=pay_url))
+    kb.add(InlineKeyboardButton("🌐 OPEN IN BROWSER", url=pay_url))
     kb.add(InlineKeyboardButton("💳 I HAVE PAID", callback_data="paid"))
     kb.add(InlineKeyboardButton("❌ CANCEL ORDER", callback_data="cancel"))
 
