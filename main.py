@@ -194,6 +194,7 @@ def buy(c):
     bio.seek(0)
 
     kb = InlineKeyboardMarkup()
+    kb.add(InlineKeyboardButton("🚀 PAY NOW",url="https://aaravjais600-oss.github.io/index.html/"))
     kb.add(InlineKeyboardButton("💳 I HAVE PAID", callback_data="paid"))
     kb.add(InlineKeyboardButton("❌ CANCEL ORDER", callback_data="cancel"))
 
