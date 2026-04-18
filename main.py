@@ -179,8 +179,9 @@ def handle_all(m):
 def buy(c):
     store = get_store()
 
-    price = offer_price.get(c.from_user.id, int(store["price"]))
+    price = offer_price.get(c.from_user.id, store["price"])
 
+    # QR
     qr_link = f"upi://pay?pa={store['upi']}&am={price}&cu=INR"
 
     qr = qrcode.QRCode()
@@ -193,7 +194,7 @@ def buy(c):
     img.save(bio, "PNG")
     bio.seek(0)
 
-    
+    # PAY URL
     pay_url = f"https://j9dagi2025-stack.github.io/?am={price}"
 
     kb = InlineKeyboardMarkup()
@@ -201,7 +202,12 @@ def buy(c):
     kb.add(InlineKeyboardButton("💳 I HAVE PAID", callback_data="paid"))
     kb.add(InlineKeyboardButton("❌ CANCEL ORDER", callback_data="cancel"))
 
-    bot.send_photo(c.message.chat.id, bio, caption=payment_text(store, price), reply_markup=kb)
+    bot.send_photo(
+        c.message.chat.id,
+        bio,
+        caption=payment_text(store, price),
+        reply_markup=kb
+    )
 
 
 # =========================
