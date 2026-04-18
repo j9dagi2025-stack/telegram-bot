@@ -181,7 +181,7 @@ def buy(c):
 
     price = offer_price.get(c.from_user.id, int(store["price"]))
 
-   
+    qr_link = f"upi://pay?pa={store['upi']}&am={price}&cu=INR"
 
     qr = qrcode.QRCode()
     qr.add_data(qr_link)
@@ -193,7 +193,7 @@ def buy(c):
     img.save(bio, "PNG")
     bio.seek(0)
 
-    qr_link = f"upi://pay?pa={store['upi']}&am={price}&cu=INR"
+    
     pay_url = f"https://j9dagi2025-stack.github.io/?am={price}"
     kb = InlineKeyboardMarkup()
     kb.add(InlineKeyboardButton("🚀 PAY NOW",url="https://j9dagi2025-stack.github.io/index.html/"))
