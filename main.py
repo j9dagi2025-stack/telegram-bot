@@ -197,7 +197,7 @@ def buy(c):
     pay_url = f"https://j9dagi2025-stack.github.io/?am={price}"
 
     kb = InlineKeyboardMarkup()
-    kb.add(InlineKeyboardButton("🌐 OPEN IN BROWSER", url=pay_url))
+    kb.add(InlineKeyboardButton("🚀 PAY NOW", url=pay_url))
     kb.add(InlineKeyboardButton("💳 I HAVE PAID", callback_data="paid"))
     kb.add(InlineKeyboardButton("❌ CANCEL ORDER", callback_data="cancel"))
 
