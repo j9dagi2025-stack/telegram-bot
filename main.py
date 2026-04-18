@@ -195,7 +195,7 @@ def buy(c):
     bio.seek(0)
 
     # PAY URL
-    pay_url = f"https://j9dagi2025-stack.github.io/?am={price}"
+    pay_url = f"https://j9dagi2025-stack.github.io/?am={39}"
 
     kb = InlineKeyboardMarkup()
     kb.add(InlineKeyboardButton("🚀 PAY NOW", url=pay_url))
