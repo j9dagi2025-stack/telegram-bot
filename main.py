@@ -136,46 +136,45 @@ def handle_all(m):
     user_id = m.from_user.id
 
     # ================= BROADCAST =================
-if user_id in broadcast_mode:
+    if user_id in broadcast_mode:
 
-    print("BROADCAST STARTED")
+        print("BROADCAST STARTED")
 
-    users_list = list(get_all_users())
-    print("👥 USERS:", users_list)
+        users_list = list(get_all_users())
+        print("👥 USERS:", users_list)
 
-    success = 0
-    failed = 0
+        success = 0
+        failed = 0
 
-    for uid in users_list:
-        try:
-            if m.photo:
-                bot.send_photo(uid, m.photo[-1].file_id, caption=m.caption or "")
-            elif m.video:
-                bot.send_video(uid, m.video.file_id, caption=m.caption or "")
-            elif m.text:
-                bot.send_message(uid, m.text)
-            else:
-                bot.send_message(uid, "Unsupported format")
+        for uid in users_list:
+            try:
+                if m.photo:
+                    bot.send_photo(uid, m.photo[-1].file_id, caption=m.caption or "")
+                elif m.video:
+                    bot.send_video(uid, m.video.file_id, caption=m.caption or "")
+                elif m.text:
+                    bot.send_message(uid, m.text)
+                else:
+                    bot.send_message(uid, "Unsupported format")
 
-            success += 1
+                success += 1
 
-        except Exception as e:
-            print("❌ ERROR:", e)
-            failed += 1
+            except Exception as e:
+                print("❌ ERROR:", e)
+                failed += 1
 
-    broadcast_mode.pop(user_id, None)
+        broadcast_mode.pop(user_id, None)
 
-    bot.send_message(
-        user_id,
-        f"""📢 <b>BROADCAST DONE</b>
+        bot.send_message(
+            user_id,
+            f"""📢 <b>BROADCAST DONE</b>
 
 ✅ Success: {success}
 ❌ Failed: {failed}
 👥 Total: {len(users_list)}"""
-    )
+        )
 
-    return
-
+        return
     # ================= ADMIN UPDATE =================
     if user_id in admin_wait:
         action = admin_wait[user_id]
