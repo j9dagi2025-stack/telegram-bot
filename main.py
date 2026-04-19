@@ -11,6 +11,7 @@ bot = telebot.TeleBot(TOKEN, parse_mode="HTML")
 admin_wait = {}
 offer_price = {}
 pending_screenshot = {}
+broadcast_mode = {}
 
 
 # =========================
@@ -101,6 +102,7 @@ def admin_panel(message):
     kb.add(InlineKeyboardButton("✏ SET START TEXT", callback_data="set_start_text"))
     kb.add(InlineKeyboardButton("👥 USERS", callback_data="users"))
     kb.add(InlineKeyboardButton("📊 STATS", callback_data="stats"))
+    kb.add(InlineKeyboardButton("📢 BROADCAST", callback_data="broadcast"))
 
     bot.send_message(message.chat.id, "👑 *ADMIN PANEL*", reply_markup=kb)
 
@@ -116,6 +118,14 @@ def admin_set(c):
     admin_wait[c.from_user.id] = c.data.replace("set_", "")
     bot.send_message(c.message.chat.id, "✏ Send value now:")
 
+@bot.callback_query_handler(func=lambda c: c.data == "broadcast")
+def start_broadcast(c):
+    if int(c.from_user.id) != int(ADMIN_ID):
+        return
+
+    broadcast_mode[c.from_user.id] = True
+    bot.send_message(c.message.chat.id, "📢 Send message / photo / video to broadcast:")
+
 
 # =========================
 # MESSAGE HANDLER (ADMIN + SCREENSHOT)
@@ -124,6 +134,43 @@ def admin_set(c):
 def handle_all(m):
 
     user_id = m.from_user.id
+
+        # ================= BROADCAST =================
+    if user_id in broadcast_mode:
+
+        users_list = get_all_users()
+
+        success = 0
+        failed = 0
+
+        for uid in users_list:
+            try:
+                if m.photo:
+                    bot.send_photo(uid, m.photo[-1].file_id, caption=m.caption or "")
+                elif m.video:
+                    bot.send_video(uid, m.video.file_id, caption=m.caption or "")
+                elif m.text:
+                    bot.send_message(uid, m.text)
+                else:
+                    bot.send_message(uid, "Unsupported format")
+
+                success += 1
+
+            except:
+                failed += 1
+
+        broadcast_mode.pop(user_id, None)
+
+        bot.send_message(
+            user_id,
+            f"""📢 <b>BROADCAST DONE</b>
+
+✅ Success: {success}
+❌ Failed: {failed}
+👥 Total: {len(users_list)}"""
+        )
+
+        return
 
     # ================= ADMIN UPDATE =================
     if user_id in admin_wait:
