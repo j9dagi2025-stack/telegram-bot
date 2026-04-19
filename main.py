@@ -140,7 +140,7 @@ def handle_all(m):
 
         print("BROADCAST STARTED")
 
-        users_list = list(get_all_users())
+        users_list = [int(x) for x in get_all_users() if str(x).isdigit()]
         print("👥 USERS:", users_list)
 
         success = 0
