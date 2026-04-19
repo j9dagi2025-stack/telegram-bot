@@ -140,7 +140,7 @@ if user_id in broadcast_mode:
 
     print("BROADCAST STARTED")
 
-    users_list = list(get_all_users()
+    users_list = list(get_all_users())
     print("👥 USERS:", users_list)
 
     success = 0
