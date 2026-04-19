@@ -135,42 +135,46 @@ def handle_all(m):
 
     user_id = m.from_user.id
 
-        # ================= BROADCAST =================
-    if user_id in broadcast_mode:
+    # ================= BROADCAST =================
+if user_id in broadcast_mode:
 
-        users_list = get_all_users()
+    print("BROADCAST STARTED")
 
-        success = 0
-        failed = 0
+    users_list = list(get_all_users()
+    print("👥 USERS:", users_list)
 
-        for uid in users_list:
-            try:
-                if m.photo:
-                    bot.send_photo(uid, m.photo[-1].file_id, caption=m.caption or "")
-                elif m.video:
-                    bot.send_video(uid, m.video.file_id, caption=m.caption or "")
-                elif m.text:
-                    bot.send_message(uid, m.text)
-                else:
-                    bot.send_message(uid, "Unsupported format")
+    success = 0
+    failed = 0
 
-                success += 1
+    for uid in users_list:
+        try:
+            if m.photo:
+                bot.send_photo(uid, m.photo[-1].file_id, caption=m.caption or "")
+            elif m.video:
+                bot.send_video(uid, m.video.file_id, caption=m.caption or "")
+            elif m.text:
+                bot.send_message(uid, m.text)
+            else:
+                bot.send_message(uid, "Unsupported format")
 
-            except:
-                failed += 1
+            success += 1
 
-        broadcast_mode.pop(user_id, None)
+        except Exception as e:
+            print("❌ ERROR:", e)
+            failed += 1
 
-        bot.send_message(
-            user_id,
-            f"""📢 <b>BROADCAST DONE</b>
+    broadcast_mode.pop(user_id, None)
+
+    bot.send_message(
+        user_id,
+        f"""📢 <b>BROADCAST DONE</b>
 
 ✅ Success: {success}
 ❌ Failed: {failed}
 👥 Total: {len(users_list)}"""
-        )
+    )
 
-        return
+    return
 
     # ================= ADMIN UPDATE =================
     if user_id in admin_wait:
