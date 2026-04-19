@@ -13,7 +13,7 @@ def add_user(uid):
     users_col.update_one({"user_id": uid}, {"$set": {"user_id": uid}}, upsert=True)
 
 def get_all_users():
-    return [u["user_id"] for u in users_col.find({}, {"_id": 0, "user_id": 1})]
+    return list(users_col.find({}, {"_id": 0, "user_id": 1}))
 
 # PAYMENTS
 def save_payment(msg_id, user_id, status):
