@@ -11,7 +11,6 @@ bot = telebot.TeleBot(TOKEN, parse_mode="HTML")
 admin_wait = {}
 offer_price = {}
 pending_screenshot = {}
-broadcast_mode = {}
 
 
 # =========================
@@ -40,17 +39,17 @@ def get_store():
 def payment_text(store, price):
     return f"""
 
-⚡ 𝐏𝐀𝐘𝐌𝐄𝐍𝐓 𝐆𝐀𝐓𝐄𝐖𝐀𝐘
+â¡ ððððððð ððððððð
 
-📛 𝐀𝐜𝐜𝐞𝐬𝐬: {store['name'] or "Not Set"}
-💵 𝐀𝐦𝐨𝐮𝐧𝐭: ₹{price}
-🏦 𝐔𝐏𝐈 𝐈𝐃: <code>{store['upi'] or "Not Set"}</code>
+ð ððððð¬ð¬: {store['name'] or "Not Set"}
+ðµ ðð¦ð¨ð®ð§ð­: â¹{price}
+ð¦ ððð ðð: <code>{store['upi'] or "Not Set"}</code>
 
-1️⃣ 𝐒𝐜𝐚𝐧 𝐐𝐑 𝐂𝐨𝐝𝐞
-2️⃣ 𝐏𝐚𝐲 𝐮𝐬𝐢𝐧𝐠 𝐔𝐏𝐈
-3️⃣ 𝐂𝐥𝐢𝐜𝐤 𝐛𝐮𝐭𝐭𝐨𝐧 𝐛𝐞𝐥𝐨𝐰
+1ï¸â£ ðððð§ ðð ðð¨ðð
+2ï¸â£ ððð² ð®ð¬ð¢ð§ð  ððð
+3ï¸â£ ðð¥ð¢ðð¤ ðð®ð­ð­ð¨ð§ ððð¥ð¨ð°
 
-📸 Send screenshot after payment
+ð¸ Send screenshot after payment
 """
 
 
@@ -70,8 +69,8 @@ def start(message):
         text = "Welcome!"
 
     kb = InlineKeyboardMarkup()
-    kb.add(InlineKeyboardButton("💳 BUY PREMIUM", callback_data="buy"))
-    kb.add(InlineKeyboardButton("🎬 DEMO", url=store["demo"]))
+    kb.add(InlineKeyboardButton("ð³ BUY PREMIUM", callback_data="buy"))
+    kb.add(InlineKeyboardButton("ð¬ DEMO", url=store["demo"]))
 
     photo = store.get("photo")
 
@@ -93,18 +92,17 @@ def admin_panel(message):
         return
 
     kb = InlineKeyboardMarkup(row_width=1)
-    kb.add(InlineKeyboardButton("✏ SET NAME", callback_data="set_name"))
-    kb.add(InlineKeyboardButton("💰 SET PRICE", callback_data="set_price"))
-    kb.add(InlineKeyboardButton("🏦 SET UPI", callback_data="set_upi"))
-    kb.add(InlineKeyboardButton("🎬 SET DEMO", callback_data="set_demo"))
-    kb.add(InlineKeyboardButton("🔗 SET PREMIUM LINK", callback_data="set_premium"))
-    kb.add(InlineKeyboardButton("🖼 SET PHOTO", callback_data="set_photo"))
-    kb.add(InlineKeyboardButton("✏ SET START TEXT", callback_data="set_start_text"))
-    kb.add(InlineKeyboardButton("👥 USERS", callback_data="users"))
-    kb.add(InlineKeyboardButton("📊 STATS", callback_data="stats"))
-    kb.add(InlineKeyboardButton("📢 BROADCAST", callback_data="broadcast"))
+    kb.add(InlineKeyboardButton("â SET NAME", callback_data="set_name"))
+    kb.add(InlineKeyboardButton("ð° SET PRICE", callback_data="set_price"))
+    kb.add(InlineKeyboardButton("ð¦ SET UPI", callback_data="set_upi"))
+    kb.add(InlineKeyboardButton("ð¬ SET DEMO", callback_data="set_demo"))
+    kb.add(InlineKeyboardButton("ð SET PREMIUM LINK", callback_data="set_premium"))
+    kb.add(InlineKeyboardButton("ð¼ SET PHOTO", callback_data="set_photo"))
+    kb.add(InlineKeyboardButton("â SET START TEXT", callback_data="set_start_text"))
+    kb.add(InlineKeyboardButton("ð¥ USERS", callback_data="users"))
+    kb.add(InlineKeyboardButton("ð STATS", callback_data="stats"))
 
-    bot.send_message(message.chat.id, "👑 *ADMIN PANEL*", reply_markup=kb)
+    bot.send_message(message.chat.id, "ð *ADMIN PANEL*", reply_markup=kb)
 
 
 # =========================
@@ -116,15 +114,7 @@ def admin_set(c):
         return
 
     admin_wait[c.from_user.id] = c.data.replace("set_", "")
-    bot.send_message(c.message.chat.id, "✏ Send value now:")
-
-@bot.callback_query_handler(func=lambda c: c.data == "broadcast")
-def start_broadcast(c):
-    if int(c.from_user.id) != int(ADMIN_ID):
-        return
-
-    broadcast_mode[c.from_user.id] = True
-    bot.send_message(c.message.chat.id, "📢 Send message / photo / video to broadcast:")
+    bot.send_message(c.message.chat.id, "â Send value now:")
 
 
 # =========================
@@ -135,46 +125,6 @@ def handle_all(m):
 
     user_id = m.from_user.id
 
-    # ================= BROADCAST =================
-    if user_id in broadcast_mode:
-
-        print("BROADCAST STARTED")
-
-        users_list = [int(x) for x in get_all_users() if str(x).isdigit()]
-        print("👥 USERS:", users_list)
-
-        success = 0
-        failed = 0
-
-        for uid in users_list:
-            try:
-                if m.photo:
-                    bot.send_photo(uid, m.photo[-1].file_id, caption=m.caption or "")
-                elif m.video:
-                    bot.send_video(uid, m.video.file_id, caption=m.caption or "")
-                elif m.text:
-                    bot.send_message(uid, m.text)
-                else:
-                    bot.send_message(uid, "Unsupported format")
-
-                success += 1
-
-            except Exception as e:
-                print("❌ ERROR:", e)
-                failed += 1
-
-        broadcast_mode.pop(user_id, None)
-
-        bot.send_message(
-            user_id,
-            f"""📢 <b>BROADCAST DONE</b>
-
-✅ Success: {success}
-❌ Failed: {failed}
-👥 Total: {len(users_list)}"""
-        )
-
-        return
     # ================= ADMIN UPDATE =================
     if user_id in admin_wait:
         action = admin_wait[user_id]
@@ -182,13 +132,13 @@ def handle_all(m):
         if action == "photo":
             if m.photo:
                 set_setting("photo", m.photo[-1].file_id)
-                bot.send_message(m.chat.id, "🖼 PHOTO UPDATED")
+                bot.send_message(m.chat.id, "ð¼ PHOTO UPDATED")
             admin_wait.pop(user_id, None)
             return
 
         if m.text:
             set_setting(action, m.text)
-            bot.send_message(m.chat.id, "✅ UPDATED")
+            bot.send_message(m.chat.id, "â UPDATED")
 
         admin_wait.pop(user_id, None)
         return
@@ -197,7 +147,7 @@ def handle_all(m):
     if pending_screenshot.get(user_id):
 
         if not m.photo:
-            bot.send_message(m.chat.id, "📸 Please send a valid screenshot image.")
+            bot.send_message(m.chat.id, "ð¸ Please send a valid screenshot image.")
             return
 
         pending_screenshot.pop(user_id, None)
@@ -205,20 +155,20 @@ def handle_all(m):
 
         kb = InlineKeyboardMarkup()
         kb.add(
-            InlineKeyboardButton("✅ APPROVE", callback_data=f"approve_{user_id}"),
-            InlineKeyboardButton("❌ REJECT", callback_data=f"reject_{user_id}")
+            InlineKeyboardButton("â APPROVE", callback_data=f"approve_{user_id}"),
+            InlineKeyboardButton("â REJECT", callback_data=f"reject_{user_id}")
         )
 
         bot.send_photo(
             ADMIN_ID,
             m.photo[-1].file_id,
-            caption=f"💰 PAYMENT PROOF\nUser: {user_id}",
+            caption=f"ð° PAYMENT PROOF\nUser: {user_id}",
             reply_markup=kb
         )
 
         bot.send_message(
             m.chat.id,
-            "✅ Screenshot received!\n⏳ Verification in progress...\n🔗 Access will be sent soon."
+            "â Screenshot received!\nâ³ Verification in progress...\nð Access will be sent soon."
         )
 
 
@@ -248,9 +198,9 @@ def buy(c):
     pay_url = f"https://j9dagi2025-stack.github.io/index.html//?am={29}"
 
     kb = InlineKeyboardMarkup()
-    kb.add(InlineKeyboardButton("🚀 PAY NOW", url=pay_url))
-    kb.add(InlineKeyboardButton("💳 I HAVE PAID", callback_data="paid"))
-    kb.add(InlineKeyboardButton("❌ CANCEL ORDER", callback_data="cancel"))
+    kb.add(InlineKeyboardButton("ð PAY NOW", url=pay_url))
+    kb.add(InlineKeyboardButton("ð³ I HAVE PAID", callback_data="paid"))
+    kb.add(InlineKeyboardButton("â CANCEL ORDER", callback_data="cancel"))
 
     bot.send_photo(
         c.message.chat.id,
@@ -269,7 +219,7 @@ def paid(c):
 
     bot.send_message(
         c.message.chat.id,
-        "📸 Please send your <b>payment screenshot</b> here."
+        "ð¸ Please send your <b>payment screenshot</b> here."
     )
 
 
@@ -297,31 +247,31 @@ def cancel(c):
     img.save(bio, "PNG")
     bio.seek(0)
 
-    # 🔥 PRO HIGH-CONVERTING TEXT
+    # ð¥ PRO HIGH-CONVERTING TEXT
     text = f"""
-    ❌ <b>ORDER CANCELLED</b>
+    â <b>ORDER CANCELLED</b>
 
-    😔 Miss ho gaya...
+    ð Miss ho gaya...
 
-    🔥 <b>EXCLUSIVE DEAL UNLOCKED</b>
+    ð¥ <b>EXCLUSIVE DEAL UNLOCKED</b>
 
-     ━━━━━━━━━━━━━━━
-    💰 <s>₹{old_price}</s> ❌
-    🎉 <b>Now Only:</b> ₹{new_price} ✅
-     ━━━━━━━━━━━━━━━
+     âââââââââââââââ
+    ð° <s>â¹{old_price}</s> â
+    ð <b>Now Only:</b> â¹{new_price} â
+     âââââââââââââââ
 
-    ⏳ <b>Only few users can grab this deal</b>
-    ⚡ <b>Instant Access</b>
-    🔐 <b>Private Premium Content</b>
+    â³ <b>Only few users can grab this deal</b>
+    â¡ <b>Instant Access</b>
+    ð <b>Private Premium Content</b>
 
-    🚨 <b>Hurry! Offer may expire anytime</b>
+    ð¨ <b>Hurry! Offer may expire anytime</b>
 
-    👇 <b>Tap below to grab now</b>
+    ð <b>Tap below to grab now</b>
 """
 
-    # 🔥 PRO BUTTON
+    # ð¥ PRO BUTTON
     kb = InlineKeyboardMarkup()
-    kb.add(InlineKeyboardButton("🔥 LIMITED OFFER - GRAB NOW", callback_data="buy"))
+    kb.add(InlineKeyboardButton("ð¥ LIMITED OFFER - GRAB NOW", callback_data="buy"))
 
     bot.send_photo(c.message.chat.id, bio, caption=text, reply_markup=kb)
 
@@ -334,7 +284,7 @@ def approve(c):
     user_id = int(c.data.split("_")[1])
     store = get_store()
 
-    # 👇 YE LINE ADD KAR
+    # ð YE LINE ADD KAR
     print("PREMIUM LINK:", store["premium_link"])
 
     set_setting("sales", str(int(store["sales"]) + 1))
@@ -347,18 +297,18 @@ def approve(c):
     bot.edit_message_caption(
     chat_id=c.message.chat.id,
     message_id=c.message.message_id,
-    caption=caption + "\n\n✅ APPROVED & LINK SENT",
+    caption=caption + "\n\nâ APPROVED & LINK SENT",
     reply_markup=None
 )
     
     try:
         bot.send_message(
             user_id,
-            f"""🎉 <b>APPROVED!</b>
+            f"""ð <b>APPROVED!</b>
 
-🔥 <b>Access Granted Successfully</b>
+ð¥ <b>Access Granted Successfully</b>
 
-👇 <b>Join Here:</b>
+ð <b>Join Here:</b>
 {store["premium_link"]}"""
         )
     except Exception as e:
@@ -377,10 +327,10 @@ def reject(c):
     bot.edit_message_caption(
     chat_id=c.message.chat.id,
     message_id=c.message.message_id,
-    caption=caption + "\n\n❌ PAYMENT REJECTED",
+    caption=caption + "\n\nâ PAYMENT REJECTED",
     reply_markup=None
 )
-    bot.send_message(user_id, "❌ Payment rejected")
+    bot.send_message(user_id, "â Payment rejected")
 
 
 # =========================
@@ -389,13 +339,13 @@ def reject(c):
 @bot.callback_query_handler(func=lambda c: c.data == "users")
 def users(c):
     users = get_all_users()
-    bot.send_message(c.message.chat.id, f"👥 USERS: {len(users)}")
+    bot.send_message(c.message.chat.id, f"ð¥ USERS: {len(users)}")
 
 
 @bot.callback_query_handler(func=lambda c: c.data == "stats")
 def stats(c):
     store = get_store()
-    bot.send_message(c.message.chat.id, f"📊 SALES: {store['sales']}\n💰 REVENUE: ₹{store['revenue']}")
+    bot.send_message(c.message.chat.id, f"ð SALES: {store['sales']}\nð° REVENUE: â¹{store['revenue']}")
 
 
 print("Bot Running...")
